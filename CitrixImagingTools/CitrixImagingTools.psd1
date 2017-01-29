@@ -1,4 +1,4 @@
-﻿@{
+@{
 
 # Script module or binary module file associated with this manifest.
 RootModule = 'CitrixImagingTools.psm1'
@@ -23,7 +23,7 @@ Copyright = '(c) 2017 Sebastian Neumann. All rights reserved.'
 Description = 'Module to simplify Citrix PVS or MCS based deployments by providing a set of useful helper functions'
 
 # Minimum version of the Windows PowerShell engine required by this module
-PowerShellVersion = '5.0'
+PowerShellVersion = '3.0'
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -59,7 +59,7 @@ PowerShellVersion = '5.0'
 # NestedModules = @()
 
 # Functions to export from this module
-#FunctionsToExport = '*'
+FunctionsToExport = @('Get-PVSRamCache','Start-P2PVS')
 
 # Cmdlets to export from this module
 # CmdletsToExport = '*'
@@ -110,4 +110,6 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
+
 
