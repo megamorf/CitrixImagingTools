@@ -49,5 +49,5 @@ Resolve-Module Psake, PSDeploy, Pester, BuildHelpers, PSScriptAnalyzer
 
 Set-BuildEnvironment
 
-Invoke-psake .\psake.ps1 -Task Deploy
+Invoke-psake "$PSScriptRoot\psake.ps1" -Task Deploy
 exit ( [int]( -not $psake.build_success ) )
