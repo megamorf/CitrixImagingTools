@@ -59,7 +59,7 @@ PowerShellVersion = '3.0'
 # NestedModules = @()
 
 # Functions to export from this module
-FunctionsToExport = @('Get-PVSRamCache','Start-P2PVS')
+FunctionsToExport = '*'
 
 # Cmdlets to export from this module
 # CmdletsToExport = '*'
