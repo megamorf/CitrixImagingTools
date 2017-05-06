@@ -1,6 +1,6 @@
 function Get-PVSRamCache
 {
-<#
+    <#
 .Synopsis
    Query the current PVS RAM Cache size - Based on looking at the Pool Non Paged Memory
 .DESCRIPTION
@@ -8,7 +8,7 @@ function Get-PVSRamCache
    Gets the local computer's non Pool Non Page Bytes
 .EXAMPLE
    "Server01", "Server02", "Server03"" | Get-PVSRamCache -Credential Credential
-   
+
     ComputerName SizeMB
     ------------ ------
     Server01        106
@@ -33,7 +33,7 @@ function Get-PVSRamCache
         [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
         [Alias("CN")]
         [String[]]$ComputerName = $Env:ComputerName,
- 
+
         [Parameter(Position = 1, Mandatory = $false)]
         [Alias("RunAs")]
         [System.Management.Automation.Credential()]$Credential = [System.Management.Automation.PSCredential]::Empty
@@ -41,23 +41,24 @@ function Get-PVSRamCache
 
     PROCESS
     {
-        foreach($Computer in $Computername)
-        {           
+        foreach ($Computer in $Computername)
+        {
             $HashTable = @{
                 ComputerName = $Computer
                 Size = 0
                 Result = Success
             }
-            
-            try {
+
+            try
+            {
                 $QueryResult = Get-WmiObject -Query 'Select PoolNonPagedBytes From Win32_PerfFormattedData_PerfOS_Memory' -ComputerName $Computer -Credential $Credential
-                $HashTable['Size'] = [math]::truncate(($QueryResult).PoolNonPagedBytes/1MB)
+                $HashTable['Size'] = [math]::truncate(($QueryResult).PoolNonPagedBytes / 1MB)
             }
-            catch 
+            catch
             {
                 $HashTable['Result'] = $_.Exception.Message
             }
-    
+
             New-Object psobject -Property $HashTable
         }
     }
