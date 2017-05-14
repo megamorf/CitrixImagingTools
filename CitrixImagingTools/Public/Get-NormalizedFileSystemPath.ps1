@@ -1,4 +1,4 @@
-From David Wyatt
+#From David Wyatt
     # http://gallery.technet.microsoft.com/scriptcenter/Normalize-file-system-5d33985a
     Function Get-NormalizedFileSystemPath {
         <#
