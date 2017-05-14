@@ -10,19 +10,19 @@
 	.PARAMETER Mode
 	There are 4 logon modes:
 
-    AllowLogons (default)
-        - default setting that allows every authenticated user to log on
+        AllowLogons (default)
+            - default setting that allows every authenticated user to log on
 
-    ProhibitNewLogonsUntilRestart
-        - new user log ons are denied until a reboot
-        - exisiting sessions can be disconnected and reconnected 
-    
-    ProhibitNewLogons
-        - new user log ons are denied
-        - exisiting sessions can be disconnected and reconnected 
-    
-    ProhibitLogons
-        - all log ons are denied indefinitely
+        ProhibitNewLogonsUntilRestart
+            - new user log ons are denied until a reboot
+            - exisiting sessions can be disconnected and reconnected 
+        
+        ProhibitNewLogons
+            - new user log ons are denied
+            - exisiting sessions can be disconnected and reconnected 
+        
+        ProhibitLogons
+            - all log ons are denied indefinitely
 
 	.PARAMETER Computername
 	Computer(s) to set the logon mode for. If not specified, the local computer will be used.
