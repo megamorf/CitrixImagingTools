@@ -1,0 +1,4 @@
+Function Remove-AutoAdminLogon
+{
+
+}
