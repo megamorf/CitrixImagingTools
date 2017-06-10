@@ -2,36 +2,39 @@ Function Initialize-TargetDeviceWriteCache
 {
     <#
     .SYNOPSIS
-        Short description
+        Sets up a target device write cache disk
     .DESCRIPTION
         To ensure that the new system will be consistent with the drive letter assignment, you must change the unique id
         for the write cache disk to match the master target device disk.
     .PARAMETER DriveLetter
-
+        The drive letter under which the write cache disk is mounted.
     .PARAMETER DriveLabel
-
+        The expected label of the write cache disk.
     .PARAMETER MasterUniqueDiskID
-
+        The unique disk ID of the write cache disk that was attached to your
+        golden image master at build time.
     .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
-    .INPUTS
-        Inputs (if any)
-    .OUTPUTS
-        Output (if any)
+        Initialize-TargetDeviceWriteCache
+        
+        Applies the default configuration:
+        - Drive Letter:   D
+        - Drive Label:    WriteCache
+        - Unique Disk ID: f000000f
     .NOTES
-        General notes
+        Work in Progress
     .LINK
         https://support.citrix.com/article/CTX133476
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
+        [Parameter(ValueFromPipelineByPropertyName=$true)]
         [ValidateNotNullOrEmpty()]
         [ValidateLength(1,2)]
         [string]
-        $DriveLetter = 'D',
+        $DriveLetter = 'D',   
 
         [ValidateNotNullOrEmpty()]
+        [ValidateLength(0,32)]
         [string]
         $DriveLabel = 'WriteCache',
 
@@ -41,19 +44,24 @@ Function Initialize-TargetDeviceWriteCache
     )
 
     # Clean up drive letter in case the string contains a ':'
-    $DriveLetter = $DriveLetter[0]
+    [string]$DriveLetter = $DriveLetter[0]
     
+    #region Pre-Flight checks
     # Check if we're even dealing with PVS
     $TargetDeviceInfo = Get-vDiskInformation
 
     if(-not $TargetDeviceInfo.IsValidTargetDevice)
     {
-        throw 'Please install target device drivers first'
+        throw 'Please install target device drivers first. Aborting...'
     }
     
-    #region Pre-Flight checks
+    if(Get-PSDrive -Name $DriveLetter -PSProvider FileSystem)
+    {
+        throw "Drive letter $DriveLetter is currently in use. Please remap the blocking device or choose a different drive letter. Aborting..." 
+    }
+    
     # Get All Disks and detect vDisks and regular Disks
-    $DiskDrives = Get-CimInstance Win32_DiskDrive #type=3
+    $DiskDrives = Get-CimInstance Win32_DiskDrive -Filter "MediaType = 'Fixed hard disk media'"
     $vDisks,$Harddisks = $DiskDrives.Where({$_.Caption -like 'Citrix Virtual*'}, 'Split')    
 
     # We'll see what we can do with this
@@ -70,7 +78,7 @@ Function Initialize-TargetDeviceWriteCache
     switch ($Harddisks.Count)
     {
         0 { 
-            Write-Warning -Message 'No HardDisk found for Write Cache!';
+            Write-Warning -Message 'No Harddisk found for Write Cache!';
             Write-Warning -Message 'Please add a disk and re-run the command. Aborting...' continue
         }
         1 {  
@@ -84,7 +92,7 @@ Function Initialize-TargetDeviceWriteCache
         }
     }
 
-    $WriteCachePartition = $WriteCacheDisk | Get-Partition | Get-Volume
+    $WriteCacheVolume = $WriteCacheDisk | Get-Partition | Get-Volume
     #endregion
 
     if($TargetDeviceInfo.vDiskMode -eq 'Shared')
@@ -92,22 +100,22 @@ Function Initialize-TargetDeviceWriteCache
         Write-Verbose -Message '[+] Setting up Write Cache Partition'
         Get-Disk | Where-Object PartitionStyle -eq 'raw' -| Initialize-Disk -PartitionStyle MBR
 
-        $IsNtfsPartitioned = $WriteCachePartition.FileSystem -eq 'NTFS'
+        $IsNtfsFormatted = $WriteCacheVolume.FileSystem -eq 'NTFS'
 
-        if($IsNtfsPartitioned)
+        if($IsNtfsFormatted)
         {
-            if($WriteCachePartition.FileSystemLabel -ne $DriveLabel)
+            if($WriteCacheVolume.FileSystemLabel -ne $DriveLabel)
             {
                 Write-Verbose -Message '  Write Cache Partition is already formatted but the label is wrong'
                 Write-Verbose -Message "  Label = $DriveLabel"
-                $WriteCachePartition | Set-Volume -NewFileSystemLabel $DriveLabel
+                $WriteCacheVolume | Set-Volume -NewFileSystemLabel $DriveLabel
             }
 
-            if($WriteCachePartition.DriveLetter -ne $DriveLetter)
+            if($WriteCacheVolume.DriveLetter -ne $DriveLetter)
             {
                 Write-Verbose -Message '  Write Cache Partition is already formatted but the drive letter is wrong'
                 Write-Verbose -Message "  Drive = $DriveLetter"
-                $WriteCacheDisk | Get-Partition | Set-Partition -NewDriveLetter
+                $WriteCacheDisk | Get-Partition | Set-Partition -NewDriveLetter $DriveLetter
             }
         }
         else
@@ -123,12 +131,12 @@ Function Initialize-TargetDeviceWriteCache
         if($MasterUniqueDiskID)
         {
             Write-Verbose "  Using custom ID: '$MasterUniqueDiskID'"
-            $WriteCacheDisk | Set-DiskUniqueId $MasterUniqueDiskID
+            Set-UniqueDiskId -ID $MasterUniqueDiskID -DriveLetter $DriveLetter
         }
         else
         {
             Write-Verbose "  Using default ID: 'f000000f'"
-            $WriteCacheDisk | Set-DiskUniqueId
+            Set-UniqueDiskId -ID 'f000000f' -DriveLetter $DriveLetter
         }   
     }
 }
