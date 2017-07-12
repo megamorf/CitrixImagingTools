@@ -1,5 +1,5 @@
 $projectRoot = Resolve-Path "$PSScriptRoot\.."
-$script:ModuleName = 'MyModule'
+$script:ModuleName = 'CitrixImagingTools'
 $moduleRoot = "$projectRoot\$ModuleName"
 
 Describe "PSScriptAnalyzer rule-sets" -Tag Build {
