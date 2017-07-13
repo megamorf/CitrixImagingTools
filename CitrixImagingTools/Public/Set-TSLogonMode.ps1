@@ -47,19 +47,19 @@
 
 	#>
 
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        [Parameter(Mandatory=$true, Position=0)]
-        [ValidateSet('AllowLogons','ProhibitNewLogonsUntilRestart','ProhibitNewLogons','ProhibitLogons')]
+        [Parameter(Mandatory = $true, Position = 0)]
+        [ValidateSet('AllowLogons', 'ProhibitNewLogonsUntilRestart', 'ProhibitNewLogons', 'ProhibitLogons')]
         [ValidateNotNullOrEmpty()]
         [string]$Mode,
         
-        [Parameter(ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, Position=1)]
-        [Alias("__Server","IPAddress","CN","dnshostname")]
+        [Parameter(ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
+        [Alias("__Server", "IPAddress", "CN", "dnshostname")]
         [ValidateNotNullOrEmpty()]
         [string[]]$Computername = '.',
 
-        [Parameter(Position=2)]
+        [Parameter(Position = 2)]
         [System.Management.Automation.PSCredential]$Credential
     )
 
@@ -68,34 +68,38 @@
         $TSSettingsParams = @{
             Namespace = 'root\CIMV2\terminalservices'
             ClassName = 'Win32_TerminalServiceSetting'
-            Verbose = $false
+            Verbose   = $false
         }
     }
 
     PROCESS
     {
-        foreach($computer in $Computername)
+        foreach ($computer in $Computername)
         {          
             $TSSettings = Get-CimInstance @TSSettingsParams -ComputerName $Computer -Credential $Credential
 
             switch ($Mode)
             {
-                'AllowLogons' { 
+                'AllowLogons'
+                { 
                     $TSSettings.Logons = 0
                     $TSSettings.SessionBrokerDrainMode = 0
                     break
                 }
-                'ProhibitNewLogOnsUntilRestart' {
+                'ProhibitNewLogOnsUntilRestart'
+                {
                     $TSSettings.Logons = 0
                     $TSSettings.SessionBrokerDrainMode = 1
                     break
                 }
-                'ProhibitNewLogOns' {
+                'ProhibitNewLogOns'
+                {
                     $TSSettings.Logons = 0
                     $TSSettings.SessionBrokerDrainMode = 2
                     break
                 }
-                'ProhibitLogOns' {
+                'ProhibitLogOns'
+                {
                     $TSSettings.Logons = 1
                 }
             }

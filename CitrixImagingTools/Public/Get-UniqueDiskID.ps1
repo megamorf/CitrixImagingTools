@@ -27,9 +27,9 @@ Function Get-UniqueDiskID
     #>
     [CmdletBinding()]  
     param(
-        [Parameter(ValueFromPipelineByPropertyName=$true)]
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
-        [ValidateLength(1,2)]
+        [ValidateLength(1, 2)]
         [string]
         $DriveLetter = 'D'          
     )
@@ -37,7 +37,7 @@ Function Get-UniqueDiskID
     # Clean up drive letter in case the string contains a ':'
     [string]$DriveLetter = $DriveLetter[0]
 
-    $DiskNumber = (Get-Partition -DriveLetter $DriveLetter).DiskNumber
+    $DiskNumber = (Get-Partition -DriveLetter $DriveLetter -ErrorAction Stop).DiskNumber
     $DiskPartFile = "$env:temp\disksignature.txt"
 
     $OutFileParams = @{
@@ -48,7 +48,7 @@ Function Get-UniqueDiskID
 
     "select disk $DiskNumber" | Out-File @OutFileParams -Force
     "uniqueid disk" | Out-File @OutFileParams -Append
-    $ResultRaw = diskpart.exe /s $DiskPartFile
+    $ResultRaw = Invoke-DiskpartScript -FilePath $DiskPartFile
 
     $SelectStringResult = $ResultRaw | Select-String -Pattern "ID:\s*(?<DiskID>[^\s]+)" -AllMatches
     $UniqueDiskID = $SelectStringResult.Matches.ForEach{$_.Groups['DiskID'].Value} | Select-Object -Unique
