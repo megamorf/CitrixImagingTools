@@ -2,6 +2,7 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "powershell.codeFormatting.newLineAfterOpenBrace": true,
@@ -11,5 +12,9 @@
     "powershell.codeFormatting.whitespaceBeforeOpenParen": true,
     "powershell.codeFormatting.whitespaceAroundOperator": true,
     "powershell.codeFormatting.whitespaceAfterSeparator": true,
-    "powershell.codeFormatting.ignoreOneLineBlock": true
+    "powershell.codeFormatting.ignoreOneLineBlock": true,
+    "editor.tabSize": 4,
+    "[json]": {
+        "editor.tabSize": 2
+    }
 }
