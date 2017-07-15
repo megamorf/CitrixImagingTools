@@ -76,7 +76,7 @@
         Description
         Creating a custom Hashtable and saving it to C:\MyNewFile.INI
     .Link
-        Get-IniContent
+        Import-IniFile
     #>
 
     [CmdletBinding()]
