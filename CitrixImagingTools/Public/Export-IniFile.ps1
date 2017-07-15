@@ -1,4 +1,4 @@
-Function Export-IniFile
+﻿Function Export-IniFile
 {
     <#
     .Synopsis

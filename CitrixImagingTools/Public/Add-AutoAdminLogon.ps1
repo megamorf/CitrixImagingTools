@@ -1,4 +1,4 @@
-Function Add-AutoAdminLogon
+﻿Function Add-AutoAdminLogon
 {
 
 }

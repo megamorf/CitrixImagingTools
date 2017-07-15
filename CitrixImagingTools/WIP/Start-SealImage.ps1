@@ -1,16 +1,20 @@
-function Start-SealImage
+﻿function Start-SealImage
 {
-    
+
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+
     if ($PSCmdlet.ShouldProcess($env:ComputerName, 'Clear Event Logs'))
     {
-        Get-EventLog -List | % { $_.clear() }
+        Get-EventLog -List | ForEach-Object { $_.clear() }
         # wevtutil cl system
     }
 
     # If MS Distributed Transaction Service is installed, run msdtc.exe -reset
 
     # if MS Message Queuing is installed, clear its cache
-    Get-Service -Name MQAC, MSMQ | Stop-Service 
+    Get-Service -Name MQAC, MSMQ | Stop-Service
 
     # Delete local profiles that are not required
 
@@ -38,7 +42,7 @@ REM // Removes the MpIdleTask scheduled task if it had already been created prio
 schtasks /Delete /TN "\Microsoft\Microsoft Antimalware\MpIdleTask" /f
 
 System Centre Configuration Manager
-REM // Delete the Hardware Inventory cache 
+REM // Delete the Hardware Inventory cache
 WMIC /namespace:\\root\ccm\invagt path inventoryActionStatus where InventoryActionID="{00000000-0000-0000-0000-000000000001}" DELETE /NOINTERACTIVE
 
 REM // Empty CcmCache (subfolders only)
@@ -51,7 +55,7 @@ reg delete HKLM\SOFTWARE\Microsoft\SystemCertificates\SMS\Certificates\ /f
 del /q "C:\Windows\ccm\logs\*.log"
 #>
 
-<#
+    <#
 we clear the key and initiate a successful RDP connection to pull a recent license.
 
 reg delete HKLM\Software\Microsoft\MSLicensing\Store\LICENSE000 /f
