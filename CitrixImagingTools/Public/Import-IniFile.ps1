@@ -50,6 +50,7 @@
         Out-IniFile
     #>
 
+    [OutputType([System.Collections.Hashtable])]
     [CmdletBinding()]
     Param(
         [ValidateNotNullOrEmpty()]
