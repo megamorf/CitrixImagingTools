@@ -5,7 +5,7 @@ Describe 'AddPrefix Filter' {
 
         Context 'Error Handling' {
             It 'Throws error if no FMA Agent found' {
-                Mock -CommandName Get-Service -MockWith {} -ParameterFilter {$Name -eq 'Spooler'}
+                Mock -CommandName Get-Service -MockWith {} -ParameterFilter {$Name -eq 'BrokerAgent'}
                 {Get-ProvisioningType} | Should throw
             }
         }
