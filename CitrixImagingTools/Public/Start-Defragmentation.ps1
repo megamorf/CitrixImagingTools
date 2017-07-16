@@ -1,13 +1,18 @@
 function Start-Defragmentation
 {
-    [cmdletbinding()]
+    [cmdletbinding(SupportsShouldProcess=$true)]
     param(
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
+        [ValidateLength(1, 2)]
+        [string]
         $DriveLetter
     )
 
-    switch -wildcard ((Get-OSVersion).Version)
+    # Clean up drive letter in case the string contains a ':'
+    [string]$DriveLetter = $DriveLetter[0]
+
+    switch -wildcard ([environment]::OSVersion.Version.ToString())
     {
         '6.1*' { $defragargs = "/H /U /V"; break }
         '6.2*' { $defragargs = "/H /K"; break }
@@ -15,7 +20,12 @@ function Start-Defragmentation
         default { $defragargs = "/U" }
     }
 
-    Write-Verbose "Starting defrag"
-    Start-Process defrag.exe -ArgumentList $DriveLetter, $defragargs -PassThru
-    Write-Verbose "Defrag complete"
+    Write-Verbose -Message ("Starting defrag" | AddPrefix)
+
+    if ($PSCmdlet.ShouldProcess("Defragmenting drive $DriveLetter", "Arguments: $defragargs"))
+    {
+        Start-Process defrag.exe -ArgumentList $DriveLetter, $defragargs -Wait
+    }
+
+    Write-Verbose -Message ("Defrag complete" | AddPrefix)
 }

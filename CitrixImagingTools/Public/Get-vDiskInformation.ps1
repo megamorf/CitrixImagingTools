@@ -4,55 +4,6 @@ Function Get-vDiskInformation
     [CmdletBinding()]
     param()
 
-    Function Get-IniContent
-    {
-        [OutputType([System.Collections.Hashtable])]
-        [CmdletBinding()]
-        Param(
-            [ValidateNotNullOrEmpty()]
-            [ValidateScript( {(Test-Path $_) -and ((Get-Item $_).Extension -eq ".ini")})]
-            [Parameter(ValueFromPipeline = $True, Mandatory = $True)]
-            [string]$FilePath
-        )
-
-        $ini = @{}
-
-        switch -regex -file $FilePath
-        {
-            "^\[(.+)\]$" # Section
-            {
-                $section = $matches[1]
-                $ini[$section] = @{}
-                $CommentCount = 0
-            }
-            "^(;.*)$" # Comment
-            {
-                if (!($section))
-                {
-                    $section = "No-Section"
-                    $ini[$section] = @{}
-                }
-                $value = $matches[1]
-                $CommentCount = $CommentCount + 1
-                $name = "Comment" + $CommentCount
-                $ini[$section][$name] = $value
-            }
-            "(.+?)\s*=\s*(.*)" # Key
-            {
-                if (!($section))
-                {
-                    $section = "No-Section"
-                    $ini[$section] = @{}
-                }
-                $name, $value = $matches[1..2]
-                $ini[$section][$name] = $value
-            }
-        }
-
-        Write-Verbose "$($MyInvocation.MyCommand.Name):: Finished Processing file: $FilePath"
-        Return $ini
-    }
-
     $vDisk = [pscustomobject]@{
         Computername               = $env:COMPUTERNAME
         isValidTargetDevice        = (Test-Path -Path 'HKLM:System\CurrentControlSet\Services\bnistack\pvsagent')
@@ -70,7 +21,7 @@ Function Get-vDiskInformation
     if ($vDisk.isValidTargetDevice)
     {
 
-        $content = Get-IniContent "C:\Personality.ini"
+        $content = Get-Personality
         $vDisk.WriteCacheTypeID = $content["StringData"]["`$WriteCacheType"]
         $vDisk.WriteCacheDrive = (Get-ItemProperty HKLM:System\CurrentControlSet\Services\bnistack\pvsagent).WriteCacheDrive
 
@@ -110,7 +61,7 @@ Function Get-vDiskInformation
 
     if (Test-Path -LiteralPath 'C:\Personality.ini')
     {
-        $Personality = Get-IniContent -FilePath 'C:\Personality.ini'
+        $Personality = Get-Personality
 
         $vDisk.vDiskName = $Personality['StringData'].'$DiskName'
         $vDisk.vDiskType = $vDisk.vDiskName.ToUpper().split('.')[-1]

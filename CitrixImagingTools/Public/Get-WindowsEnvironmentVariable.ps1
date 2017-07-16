@@ -1,5 +1,27 @@
 function Get-WindowsEnvironmentVariable
 {
+    <#
+    .SYNOPSIS
+        Returns environment variables.
+
+    .DESCRIPTION
+        Returns one or more variables from all or specific scopes.
+
+    .PARAMETER Name
+        Specify one or more variable names. Doesn't support wildcards
+
+    .PARAMETER Scope
+        Specify an environment scope. Defaults to all scopes.
+
+    .EXAMPLE
+        Get-WindowsEnvironmentVariable
+
+        ToDo: add example output
+
+    .NOTES
+        ToDo: add tags, author info
+    #>
+
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false)]

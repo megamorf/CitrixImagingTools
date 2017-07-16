@@ -1,11 +1,21 @@
 function Remove-CommonDesktopShortcut
 {
     <#
-.Synopsis
-   Removes common Desktop links
-.DESCRIPTION
-   Deletes all *.lnk files in C:\Users\Public\Desktop.
-#>
+    .SYNOPSIS
+        Removes common Desktop links
+
+    .DESCRIPTION
+        Deletes all *.lnk files in C:\Users\Public\Desktop.
+
+    .EXAMPLE
+        Remove-CommonDesktopShortcut
+
+        ToDo: add example output
+
+    .NOTES
+        ToDo: add tags, author info
+    #>
+
     [CmdletBinding(SupportsShouldProcess = $true)]
     Param()
 

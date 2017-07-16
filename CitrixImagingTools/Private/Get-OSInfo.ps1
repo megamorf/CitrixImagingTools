@@ -8,12 +8,11 @@ function Get-OSInfo
         PSVersion    = $PSVersionTable.PSVersion
         Domain       = $ComputerSystemInfo.Domain
         PartOfDomain = $ComputerSystemInfo.PartOfDomain
+        NICs         = $NICInfo
         Drives       = [pscustomobject]@{
             Disks  = $DriveInfo | Where-Object DriveType -eq 3
             CD     = $DriveInfo | Where-Object DriveType -eq 5
             Floppy = $DriveInfo | Where-Object DriveType -eq 2
         }
-        NICs         = $NICInfo
     }
-
 }

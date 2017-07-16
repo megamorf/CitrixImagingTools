@@ -1,19 +1,40 @@
-function Disable-OfflineFiles
+﻿function Disable-OfflineFiles
 {
     <#
-    
-    The disabling of Offline Folders is strongly recommended to prevent Windows from caching network files on its local disk – a feature with no benefit to a diskless system
+    .SYNOPSIS
+        Disables Offline Files which is recommended for always-on systems.
 
-    Offline Files saves a copy of network files on the user's computer for use when the computer is not connected to the network. 
-    Note: Changes to this setting do not take effect until the affected computer is restarted.
+    .DESCRIPTION
+        The disabling of Offline Files is strongly recommended to prevent Windows from caching
+        network files on its local disk – a feature with no benefit to a diskless system.
+
+        Offline Files saves a copy of network files on the user's computer for use when the computer
+        is not connected to the network.
+
+        Note: Changes to this setting do not take effect until the affected computer is restarted.
+
+    .EXAMPLE
+        Disable-OfflineFiles
+
+        ToDo: add example output
+
+    .NOTES
+        ToDo: add tags, author info
     #>
 
-    $OfflineFileGPOSettings = @{
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param()
+
+    $Params = @{
         Path         = 'HKLM:\Software\Policies\Microsoft\Windows\NetCache'
         Name         = 'Enabled'
         PropertyType = 'Dword'
         Value        = 0
     }
-    
-    New-ItemProperty @OfflineFileGPOSettings -Force
+
+    if ($PSCmdlet.ShouldProcess('Disable offline files on the machine'))
+    {
+        New-ItemProperty @Params -Force
+    }
 }

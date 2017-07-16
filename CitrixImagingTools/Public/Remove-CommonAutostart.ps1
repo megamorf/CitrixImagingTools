@@ -1,29 +1,46 @@
 ﻿function Remove-CommonAutostart
 {
-<#
-.Synopsis
-   Removes common Autostart files
-.DESCRIPTION
-   Deletes all files in C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup.
-#>
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    <#
+    .SYNOPSIS
+        Removes common Autostart files
+
+    .DESCRIPTION
+        Deletes files in C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup.
+
+        All files are deleted by default.
+
+    .PARAMETER Filter
+        Specify a file filter. Defaults to '*.*'.
+        Wildcards are supported. Arrays of filters are not supported.
+
+    .EXAMPLE
+        Remove-CommonAutostart
+
+        ToDo: add example output
+
+    .NOTES
+        ToDo: add tags, author info
+    #>
+
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [ValidateNotNullOrEmpty()]
-        [string]$Filter = '*.*'
+        [string]
+        $Filter = '*.*'
     )
 
-    Write-Verbose "Removing files from Startup folder - Filter: $FileName"
+    Write-Verbose -Message ("Removing files from Startup folder - Filter: $FileName" | AddPrefix)
 
     $CommonAutoStart = [System.Environment]::GetFolderPath("CommonStartup")
 
     Get-ChildItem -LiteralPath $CommonAutoStart -Force -Filter $Filter | ForEach-Object {
-         try
+        try
         {
             Remove-Item -Path $_.FullName -ErrorAction Stop -Confirm:$False -Force -Verbose:$PSCmdlet.MyInvocation.BoundParameters.ContainsKey('Verbose')
         }
         catch
         {
-            Write-Warning "Error deleting file: $_, $($_.FullName)"
+            Write-Warning -Message ("Error deleting file: $_, $($_.FullName)" | AddPrefix)
         }
     }
 }

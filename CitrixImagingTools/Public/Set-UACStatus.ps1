@@ -21,9 +21,9 @@
         }
     }
 
-    if ($pscmdlet.ShouldProcess($Status)) 
+    if ($pscmdlet.ShouldProcess($Status))
     {
-        Write-Verbose -Message "$Logmsg - a reboot is required to apply the changes."
+        Write-Verbose -Message ("$Logmsg - a reboot is required to apply the changes." | AddPrefix)
         New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\system' -Name EnableLUA -PropertyType DWord -Value $Value -Force
     }
 }

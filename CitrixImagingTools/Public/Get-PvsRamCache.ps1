@@ -27,16 +27,20 @@ function Get-PVSRamCache
     srvwts105       105
     [...]
 #>
-
+    [OutputType([pscustomobject])]
     [CmdletBinding()]
     param (
         [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
         [Alias("CN")]
-        [String[]]$ComputerName = $Env:ComputerName,
+        [String[]]
+        $ComputerName = $Env:ComputerName,
 
         [Parameter(Position = 1, Mandatory = $false)]
         [Alias("RunAs")]
-        [System.Management.Automation.PSCredential()]$Credential
+        [ValidateNotNull()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty
     )
 
     PROCESS
@@ -45,13 +49,13 @@ function Get-PVSRamCache
         {
             $HashTable = @{
                 ComputerName = $Computer
-                Size = 0
-                Result = Success
+                Size         = 0
+                Result       = Success
             }
 
             try
             {
-                $QueryResult = Get-WmiObject -Query 'Select PoolNonPagedBytes From Win32_PerfFormattedData_PerfOS_Memory' -ComputerName $Computer -Credential $Credential
+                $QueryResult = CimInstance -Query 'Select PoolNonPagedBytes From Win32_PerfFormattedData_PerfOS_Memory' -ComputerName $Computer -Credential $Credential
                 $HashTable['Size'] = [math]::truncate(($QueryResult).PoolNonPagedBytes / 1MB)
             }
             catch
@@ -59,7 +63,7 @@ function Get-PVSRamCache
                 $HashTable['Result'] = $_.Exception.Message
             }
 
-            New-Object psobject -Property $HashTable
+            [pscustomobject]$HashTable
         }
     }
 }
