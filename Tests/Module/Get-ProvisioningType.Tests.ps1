@@ -1,6 +1,6 @@
 Import-Module $PSScriptRoot\..\..\CitrixImagingTools\CitrixImagingTools.psd1 -Force
 
-Describe 'AddPrefix Filter' {
+Describe 'Get-ProvisioningType' {
     InModuleScope CitrixImagingTools {
 
         Context 'Error Handling' {
@@ -11,6 +11,8 @@ Describe 'AddPrefix Filter' {
         }
 
         Context 'Type Detection' {
+            Mock -CommandName Get-Service -MockWith {"Service"} -ParameterFilter {$Name -eq 'BrokerAgent'}
+
             It 'Returns "PVS" when personality.ini contains "$Diskname="' {
                 Mock -CommandName Select-String -MockWith {$true}
                 Get-ProvisioningType | Should Be 'PVS'
