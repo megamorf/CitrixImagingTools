@@ -1,8 +1,29 @@
 Function Set-SpoolerDirectory
 {
-    # create redirected Spool directory
+    <#
+    .SYNOPSIS
+        Sets the spooler directory to the specified location.
 
-    [CmdletBinding(DefaultParameterSetName = 'Default')]
+    .DESCRIPTION
+        The redirection of the printer spooler directory is strongly recommended
+        to prevent Windows from needlessly filling up the write cache on PVS target devices.
+
+    .PARAMETER Path
+        The printer spooler target location. Gets created if it doesn't exist.
+        For PVS target devices the path should point to the write cache disk.
+
+    .PARAMETER RestoreDefaultPath
+        If used resets the spooler directory to its default path.
+
+    .EXAMPLE
+        Set-SpoolerDirectory -Path "$env:WriteCachePath\Spooler"
+
+        ToDo: add example output
+
+    .NOTES
+        ToDo: add tags, author info
+    #>
+    [CmdletBinding(DefaultParameterSetName = 'Default', SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $true, ParameterSetName = 'Default')]
         [ValidateNotNullOrEmpty()]
@@ -21,19 +42,29 @@ Function Set-SpoolerDirectory
 
     if (-not(Test-Path -LiteralPath $Path))
     {
-        New-Item -Path $Path -ItemType Directory -Force -ErrorAction Stop | Out-Null
+        if ($PSCmdlet.ShouldProcess($Path, 'Create Spooler directory'))
+        {
+            New-Item -Path $Path -ItemType Directory -Force -ErrorAction Stop | Out-Null
+        }
+
     }
 
-    SpoolerParams = @{
-        Path  = 'HKLM:\SYSTEM\CurrentControlSet\Control\Print\Printers'
-        Name  = 'DefaultSpoolDirectory'
-        Value = $Path
-    }
+    if ($PSCmdlet.ShouldProcess('Set spooler directory'))
+    {
+        SpoolerParams = @{
+            Path  = 'HKLM:\SYSTEM\CurrentControlSet\Control\Print\Printers'
+            Name  = 'DefaultSpoolDirectory'
+            Value = $Path
+        }
 
-    Set-ItemProperty @SpoolerParams -ErrorAction Stop
+        Set-ItemProperty @SpoolerParams -ErrorAction Stop
+    }
 
     if ((Get-Service -Name Spooler).Status -eq 'Running')
     {
-        Restart-Service -Name Spooler -Force
+        if ($PSCmdlet.ShouldProcess('Restart spooler service to apply settings'))
+        {
+            Restart-Service -Name Spooler -Force
+        }
     }
 }

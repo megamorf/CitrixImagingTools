@@ -2,52 +2,55 @@ function Set-UniqueDiskID
 {
     <#
     .SYNOPSIS
-    Changes the unique disk ID of a harddrive 
-    
+        Changes the unique disk ID of a harddrive
+
     .DESCRIPTION
-    Uses diskpart since PowerShell doesn't have access to the 
-    unique disk ID property (Get-Disk returns a different ID).
-    
+        Uses diskpart since PowerShell doesn't have access to the
+        unique disk ID property (Get-Disk returns a different ID).
+
     .PARAMETER ID
-    New unique disk ID. Can be:
-    - MBR: 8 character hex string
-    - GPT: GUID
-    
+        New unique disk ID. Can be:
+        - MBR: 8 character hex string
+        - GPT: GUID
+
     .PARAMETER DriveLetter
-    The drive you want to change the unique disk ID for.
-    
-    .EXAMPLE
-    Set-UniqueDiskID -ID "A2EB1AE4" -DriveLetter G -OutVariable Result
-    
-    Driveletter  : G
-    DiskNumber   : 2
-    UniqueDiskID : A2EB1AE4
-    OldID        : A2EB1AE5
-    Result       : Success
+        The drive you want to change the unique disk ID for.
 
     .EXAMPLE
-    Set-UniqueDiskID -ID "A2EB1AE4" -DriveLetter G -OutVariable Result -WhatIf
-    
-    WhatIf: Performing operation "Change ID from A2EB1AE4 to A2EB1AE5" on Target "g: (Disk Number 2)".
+        Set-UniqueDiskID -ID "A2EB1AE4" -DriveLetter G -OutVariable Result
+
+        Driveletter  : G
+        DiskNumber   : 2
+        UniqueDiskID : A2EB1AE4
+        OldID        : A2EB1AE5
+        Result       : Success
+
+    .EXAMPLE
+        Set-UniqueDiskID -ID "A2EB1AE4" -DriveLetter G -OutVariable Result -WhatIf
+
+        WhatIf: Performing operation "Change ID from A2EB1AE4 to A2EB1AE5" on Target "g: (Disk Number 2)".
 
 
-    Driveletter  : G
-    DiskNumber   : 2
-    UniqueDiskID : A2EB1AE4
-    OldID        : A2EB1AE4
-    Result       : Unchanged
+        Driveletter  : G
+        DiskNumber   : 2
+        UniqueDiskID : A2EB1AE4
+        OldID        : A2EB1AE4
+        Result       : Unchanged
+
+    .NOTES
+        ToDo: add tags, author info.
     #>
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [ValidateNotNullOrEmpty()]
         [Alias('UniqueDiskID')]
         $ID,
 
-        [Parameter(ValueFromPipelineByPropertyName=$true)]
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
-        [ValidateLength(1,2)]
+        [ValidateLength(1, 2)]
         [string]
-        $DriveLetter = 'D'      
+        $DriveLetter = 'D'
     )
 
     # Clean up drive letter in case the string contains a ':'
@@ -78,14 +81,14 @@ function Set-UniqueDiskID
     "select disk $DiskNumber" | Out-File @OutFileParams -Force
     "uniqueid disk ID=$ID" | Out-File @OutFileParams -Append
 
-    if($PSCmdlet.ShouldProcess("$DriveLetter`: (Disk Number $DiskNumber)", "Change ID from $($Old.UniqueDiskID) to $ID"))
+    if ($PSCmdlet.ShouldProcess("$DriveLetter`: (Disk Number $DiskNumber)", "Change ID from $($Old.UniqueDiskID) to $ID"))
     {
-        $null = diskpart /s $DiskpartFile
+        $null = Invoke-DiskpartScript -FilePath $DiskpartFile
     }
-    
+
     # Get new state for comparison
     $New = Get-UniqueDiskID -DriveLetter $DriveLetter
-    if($Old.UniqueDiskID -eq $New.UniqueDiskID)
+    if ($Old.UniqueDiskID -eq $New.UniqueDiskID)
     {
         $Result = 'Unchanged'
     }

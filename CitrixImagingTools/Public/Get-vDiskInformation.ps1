@@ -21,7 +21,7 @@ Function Get-vDiskInformation
     if ($vDisk.isValidTargetDevice)
     {
 
-        $content = Import-IniFile -FilePath "C:\Personality.ini"
+        $content = Get-Personality
         $vDisk.WriteCacheTypeID = $content["StringData"]["`$WriteCacheType"]
         $vDisk.WriteCacheDrive = (Get-ItemProperty HKLM:System\CurrentControlSet\Services\bnistack\pvsagent).WriteCacheDrive
 
@@ -61,7 +61,7 @@ Function Get-vDiskInformation
 
     if (Test-Path -LiteralPath 'C:\Personality.ini')
     {
-        $Personality = Import-IniFile -FilePath 'C:\Personality.ini'
+        $Personality = Get-Personality
 
         $vDisk.vDiskName = $Personality['StringData'].'$DiskName'
         $vDisk.vDiskType = $vDisk.vDiskName.ToUpper().split('.')[-1]

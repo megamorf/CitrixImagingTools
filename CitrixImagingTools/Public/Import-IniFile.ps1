@@ -47,7 +47,7 @@
         Returns the key "Key" of the section "Section" from the C:\settings.ini file
 
     .Link
-        Out-IniFile
+        Export-IniFile
     #>
 
     [OutputType([System.Collections.Hashtable])]
@@ -56,7 +56,8 @@
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {(Test-Path $_) -and ((Get-Item $_).Extension -eq ".ini")})]
         [Parameter(ValueFromPipeline = $True, Mandatory = $True)]
-        [string]$FilePath
+        [string]
+        $FilePath
     )
 
     Begin

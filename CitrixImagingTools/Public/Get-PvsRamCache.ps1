@@ -27,7 +27,7 @@ function Get-PVSRamCache
     srvwts105       105
     [...]
 #>
-
+    [OutputType([pscustomobject])]
     [CmdletBinding()]
     param (
         [Parameter(Position = 0, Mandatory = $false, ValueFromPipeline = $true)]
@@ -63,7 +63,7 @@ function Get-PVSRamCache
                 $HashTable['Result'] = $_.Exception.Message
             }
 
-            [pscustomoject]$HashTable
+            [pscustomobject]$HashTable
         }
     }
 }
