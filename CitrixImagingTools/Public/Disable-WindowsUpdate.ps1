@@ -1,4 +1,4 @@
-function Disable-WindowsUpdate
+﻿function Disable-WindowsUpdate
 {
     <#
     .SYNOPSIS

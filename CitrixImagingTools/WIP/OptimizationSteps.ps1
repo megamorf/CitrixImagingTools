@@ -22,19 +22,8 @@ at HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Network
 
 #endregion
 
-#region Disable Clear Page File at Shutdown
-Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name ClearPageFileAtShutdown -Value 0 #dword
-#endregion
+
 
 #region Increase Service Startup Timeout
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name ServicesPipeTimeout -Value #dword:0002bf20
 #endregion
-
-#region Disable Large Send Offload
-Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\BNNS\Parameters' -Name EnableOffload -Value 0 #dword
-#endregion
-
-#region Disable TCP/IP Offload
-Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters' -Name DisableTaskOffload -Value 1 #dword
-#endregion
-
