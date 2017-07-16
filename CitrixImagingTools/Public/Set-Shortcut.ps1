@@ -23,7 +23,7 @@ Function Set-Shortcut
         ToDo: add tags, author info
     #>
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string]
         $TargetPath,
@@ -35,9 +35,12 @@ Function Set-Shortcut
         $DestinationPath
     )
 
-    $WshShell = New-Object -ComObject WScript.Shell
-    $Shortcut = $WshShell.CreateShortcut($DestinationPath)
-    $Shortcut.TargetPath = $TargetPath
-    $Shortcut.Arguments = $Arguments
-    $Shortcut.Save()
+    if ($PSCmdlet.ShouldProcess("Link location: $DestinationPath, Command: [$TargetPath $Arguments]", 'Create Shortcut'))
+    {
+        $WshShell = New-Object -ComObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut($DestinationPath)
+        $Shortcut.TargetPath = $TargetPath
+        $Shortcut.Arguments = $Arguments
+        $Shortcut.Save()
+    }
 }

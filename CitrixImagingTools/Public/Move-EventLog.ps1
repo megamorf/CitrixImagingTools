@@ -1,70 +1,80 @@
 ﻿function Move-EventLog
 {
-    [CmdletBinding()]
+    <#
+    .SYNOPSIS
+        Configures the path where event logs are stored.
+
+    .DESCRIPTION
+        The redirection of Event logs is strongly recommended to prevent Windows
+        from needlessly filling up the write cache on PVS target devices.
+
+        This is done by enumerating all event logs in the registry and changing
+        their filesystem path to the specified destination.
+
+    .PARAMETER Destination
+        Path to where Event logs should be moved. It supports the batch environment
+        variable notation in paths, e.g.: "%WriteCacheDisk%\EventLogs".
+
+        In the registry the path value is stored in an ExpandString value to allow
+        for environment variable based dynamic path expansion.
+
+    .EXAMPLE
+        Move-EventLog -Destination "%WriteCacheDisk%\EventLogs" -Verbose
+
+        Sets "%WriteCacheDisk%\EventLogs" as filesystem location.
+
+    .NOTES
+        ToDo: add tags, author info
+    #>
+
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
     param (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [string]$Destination
     )
-    function Test-IsVistaOr2008OrAbove
-    {
-        If ((Get-WmiObject -Class Win32_OperatingSystem).BuildNumber -gt 7600)
-        {
-            return $true
-        }
-        return $false
-    }
 
     if (-not (Test-Path -LiteralPath $Destination))
     {
-        mkdir $Destination -Force -ErrorAction Stop | Out-Null
+        $ExpandedDestinationPath = [System.Environment]::ExpandEnvironmentVariables($Destination)
+        New-Item -Path $ExpandedDestinationPath -ItemType Directory -Force -ErrorAction Stop | Out-Null
     }
 
-    # Log-Extension bestimmen
-    switch (Test-IsVistaOr2008OrAbove)
-    {
-        $True { $Ext = '.evtx'; $EventLogs = @(Get-ChildItem -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\EventLog' -ErrorAction Stop) }
-        $False { $Ext = '.evt' ; $EventLogs = @(Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Channels' -ErrorAction Stop) }
-    }
+    $EvtxLogs = Get-ChildItem -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\EventLog'
+    $EvtxLogs | Add-Member -NotePropertyName Ext -NotePropertyValue '.evtx'
 
-    # Validate inputs
-    if (($EventLogs -isnot [array]) -or ($EventLogs[0] -isnot [Microsoft.Win32.RegistryKey]))
-    {
-        throw 'Wrong Input'
-    }
+    $EvtLogs = Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Channels'
+    $EvtLogs | Add-Member -NotePropertyName Ext -NotePropertyValue '.evt'
 
     $count = 0
+    $EventLogs = ($EvtxLogs + $EvtLogs)
 
-    # Durchlaufen
     foreach ($EventLogKey in $EventLogs)
     {
         $count++
-        $percent = $count / $EventLogs.count * 100
-        Write-Progress -Activity 'Ändere Eventlog-Speicherort...' -PercentComplete $percent -CurrentOperation "$percent% complete" -Status "$(Split-Path -Leaf -Path $EventLogKey.Name)"
+        $percent = [math]::Round(($count / $EventLogs.count * 100), 2)
+        Write-Progress -Activity 'Redirect Eventlog...' -PercentComplete $percent -CurrentOperation "$percent% complete" -Status "$(Split-Path -Leaf -Path $EventLogKey.Name)"
 
-        # Keys und Werte aus dem Schlüssel auslesen
+        # Get keys and values
         $SubKey = Get-ItemProperty -Path $EventLogKey.PSPath
 
-        # # Dateisystempfad zum Log aus Registry Key auslesen
+        # Get filesystem path to log from reg key
         if ($null -ne $SubKey.File)
         {
-            # File ist gefüllt, also einfach auslesen
+            # file value exists so use that
             $File = Split-Path -Leaf -Path $SubKey.File
         }
         else
         {
-            # File aus dem Regschlüssel und Dateiendung generieren, vorher nicht erlaubte Pfadzeichen ersetzen
-            $File = Split-Path -Leaf -Path (($EventLogKey.Name + $Ext) -replace '/', '%4')
+            # get file value from reg key, generate file extension
+            # and replace illegal characters in path
+            $File = Split-Path -Leaf -Path (($EventLogKey.Name + $EventLogKey.Ext) -replace '/', '%4')
         }
 
-        Write-Verbose "Ändere [$(Split-Path -Leaf -Path $EventLogKey.Name)] auf [$(Join-Path $Destination $File)]"
+        Write-Verbose "Setting [$(Split-Path -Leaf -Path $EventLogKey.Name)] to [$(Join-Path $Destination $File)]"
         Set-ItemProperty -Path $SubKey.PSPath -Name File -Value (Join-Path $Destination $File) -Type ExpandString
 
-        If (Test-IsVistaOr2008OrAbove)
-        {
-            Write-Verbose "Setze zusätzliches 'Flag' für Windows > XP/2003, damit neuer Pfad benutzt wird"
-            New-ItemProperty -Path $SubKey.PSPath -Name Flags -Value 1 -PropertyType dword -ErrorAction SilentlyContinue
-        }
+        # Set additional flag for Windows > XP/2003 to actually apply the new path
+        New-ItemProperty -Path $SubKey.PSPath -Name Flags -Value 1 -PropertyType dword -Force -ErrorAction SilentlyContinue
     }
-
-    Write-Progress -Activity 'Ändere Eventlog-Speicherort...' -Completed -Status 'All done.'
 }

@@ -1,4 +1,4 @@
-function Disable-LargeSendOffloading
+﻿function Disable-LargeSendOffloading
 {
     <#
     .SYNOPSIS
