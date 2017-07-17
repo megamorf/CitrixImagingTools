@@ -49,9 +49,9 @@ Function Set-SpoolerDirectory
 
     }
 
-    if ($PSCmdlet.ShouldProcess('Set spooler directory'))
+    if ($PSCmdlet.ShouldProcess($Path, 'Set spooler directory'))
     {
-        SpoolerParams = @{
+        $SpoolerParams = @{
             Path  = 'HKLM:\SYSTEM\CurrentControlSet\Control\Print\Printers'
             Name  = 'DefaultSpoolDirectory'
             Value = $Path
@@ -62,7 +62,7 @@ Function Set-SpoolerDirectory
 
     if ((Get-Service -Name Spooler).Status -eq 'Running')
     {
-        if ($PSCmdlet.ShouldProcess('Restart spooler service to apply settings'))
+        if ($PSCmdlet.ShouldProcess('Spooler', 'Restart service to apply settings'))
         {
             Restart-Service -Name Spooler -Force
         }
