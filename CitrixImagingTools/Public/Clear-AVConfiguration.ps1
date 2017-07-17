@@ -14,7 +14,7 @@ function Clear-AVConfiguration
         
         if ($PSCmdlet.ShouldProcess('[Sophos]', '1. Stop services'))
         {
-            $Services = 'Sophos Message Router', 'Sophos Agent', 'Sophos AutoUpdate Service', 'Sophos Web Intelligence Agent'
+            $Services = 'Sophos Message Router', 'Sophos Agent', 'Sophos AutoUpdate Service', 'Sophos Web Intelligence Service', 'Sophos Web Filter'
             $Services.foreach{ Stop-Service @EA -DisplayName $_ -PassThru -Force | Set-Service -StartupType Disabled }
         }
 
