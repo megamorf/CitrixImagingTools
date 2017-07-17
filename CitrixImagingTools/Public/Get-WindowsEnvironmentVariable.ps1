@@ -16,7 +16,28 @@ function Get-WindowsEnvironmentVariable
     .EXAMPLE
         Get-WindowsEnvironmentVariable
 
-        ToDo: add example output
+        Returns environment variables from the User, Machine and
+        Process scopes.
+
+    .EXAMPLE
+        Get-WindowsEnvironmentVariable -Name TEMP
+
+        Name Scope   Value
+        ---- -----   -----
+        TEMP User    C:\Users\testuser\AppData\Local\Temp
+        TEMP Machine C:\Windows\TEMP
+        TEMP Process C:\Users\testuser\AppData\Local\Temp\4
+
+        Returns a specific variable from all scopes.
+
+    .EXAMPLE
+        Get-WindowsEnvironmentVariable -Name TEMP -Scope User
+
+        Name Scope   Value
+        ---- -----   -----
+        TEMP User    C:\Users\testuser\AppData\Local\Temp
+
+        Returns a specific variable from a specific scope.
 
     .NOTES
         ToDo: add tags, author info
@@ -55,6 +76,6 @@ function Get-WindowsEnvironmentVariable
             $EnvVariables = $EnvVariables | Where-Object {$Name -contains $_.Name}
         }
 
-        return $EnvVariables
+        $EnvVariables
     }
 }
