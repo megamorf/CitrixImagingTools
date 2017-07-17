@@ -38,7 +38,7 @@ task Test -depends Init, Analyze, Pester  {
 
 task Analyze -Depends Init {
     $lines
-    $saResults = Invoke-ScriptAnalyzer -Path $sut -Severity Error -Recurse -Verbose:$false
+    $saResults = Invoke-ScriptAnalyzer -Path $sut -Severity Error -Recurse -Verbose:$false -ExcludeRule 'PSUseToExportFieldsInManifest'
     if ($saResults) {
         $saResults | Format-Table
         Write-Error -Message 'One or more Script Analyzer errors/warnings where found. Build cannot continue!'
