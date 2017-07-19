@@ -40,6 +40,7 @@ task Test -depends Init, Analyze, Pester {
 task Analyze -Depends Init {
     $lines
     $saResults = Invoke-ScriptAnalyzer -Path $sut -Severity Error -Recurse -Verbose:$false -ExcludeRule 'PSUseToExportFieldsInManifest'
+
     if ($saResults)
     {
         $saResults | Format-Table

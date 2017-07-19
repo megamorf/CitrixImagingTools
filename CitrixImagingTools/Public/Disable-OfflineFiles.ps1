@@ -35,6 +35,11 @@
 
     if ($PSCmdlet.ShouldProcess('Disable offline files on the machine'))
     {
+        if ($false -eq (Test-Path -Path $Params.Path))
+        {
+            New-Item -Path $Params.Path -ItemType Directory -Force | Out-Null
+        }
+
         New-ItemProperty @Params -Force
     }
 }
