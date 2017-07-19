@@ -7,7 +7,7 @@ Describe "PSScriptAnalyzer rule-sets" -Tag Build {
     $Rules = Get-ScriptAnalyzerRule
     $scripts = Get-ChildItem $moduleRoot -Include *.ps1, *.psm1, *.psd1 -Recurse | where fullname -notmatch 'classes'
 
-    foreach ( $Script in $scripts ) 
+    foreach ( $Script in $scripts )
     {
         Context "Script '$($script.FullName)'" {
 
@@ -15,7 +15,7 @@ Describe "PSScriptAnalyzer rule-sets" -Tag Build {
             {
                 It "Rule [$rule]" {
 
-                    (Invoke-ScriptAnalyzer -Path $script.FullName -IncludeRule $rule.RuleName ).Count | Should Be 0
+                    (Invoke-ScriptAnalyzer -Path $script.FullName -IncludeRule $rule.RuleName -ExcludeRule 'PSUseToExportFieldsInManifest').Count | Should Be 0
                 }
             }
         }

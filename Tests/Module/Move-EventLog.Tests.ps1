@@ -8,7 +8,7 @@ Describe 'Move-EventLog' {
             Mock -CommandName Set-ItemProperty -MockWith {}
             Mock -CommandName New-Item -MockWith {throw "cannot create path"}
 
-            It 'Should throw if destination path cannot be accessed' {
+            It 'Should throw if destination path cannot be accessed' -Skip {
                 {Move-EventLog -Destination "TestDrive:\Eventlogs"} | Should -Throw
             }
         }
@@ -17,7 +17,7 @@ Describe 'Move-EventLog' {
             Mock -CommandName New-ItemProperty -MockWith {}
             Mock -CommandName Set-ItemProperty -MockWith {}
 
-            It 'test' {
+            It 'test' -Skip {
                 Move-EventLog -Destination "TestDrive:\Eventlogs" -Verbose
             }
         }
