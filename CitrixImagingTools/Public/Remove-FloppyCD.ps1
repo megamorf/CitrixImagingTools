@@ -17,11 +17,14 @@ Function Remove-FloppyCD
     .NOTES
         ToDo: add tags, author info
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param()
 
-    Get-WmiObject Win32_LogicalDisk | Where-Object { $_.DriveType -match '2|5' } | ForEach-Object {
-        Write-Verbose -Message ("Removing drive: $($_.DeviceID)" | AddPrefix)
-        & mountvol.exe $_.DeviceID /D
+    Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object DriveType -match '2|5' | ForEach-Object {
+        if ($PSCmdlet.ShouldProcess("Drive letter $($_.DeviceID)", 'Remove device'))
+        {
+            Write-Verbose -Message ("Removing drive: $($_.DeviceID)" | AddPrefix)
+            & mountvol.exe $_.DeviceID /D
+        }
     }
 }

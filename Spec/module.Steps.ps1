@@ -83,13 +83,13 @@ Then 'all public functions (?<Action>.*)' {
     $AllPassed = $true
     foreach ($command in (Get-Command -Module $ModuleName  ))
     {
-        $step.text = ('function {0} {1}' -f $command.Name, $Action )           
-        
+        $step.text = ('function {0} {1}' -f $command.Name, $Action )
+
         Invoke-GherkinStep $step -Pester $Pester -Visible
         If ( -Not $Pester.TestResult[-1].Passed )
         {
             $AllPassed = $false
-        } 
+        }
 
         $step.keyword = 'And'
     }
@@ -106,24 +106,24 @@ Given 'we have (?<folder>(public)) functions?' {
 }
 
 Then 'all script files pass PSScriptAnalyzer rules' {
-    
+
     $Rules = Get-ScriptAnalyzerRule
     $scripts = Get-ChildItem $BaseFolder -Include *.ps1, *.psm1, *.psd1 -Recurse | where fullname -notmatch 'classes'
-   
+
     $AllPassed = $true
 
     foreach ($Script in $scripts )
-    {      
+    {
         $file = $script.fullname.replace($BaseFolder, '$')
-       
+
 
         context $file {
-        
+
             foreach ( $rule in $rules )
             {
                 It " [$file] Rule [$rule]" {
 
-                    (Invoke-ScriptAnalyzer -Path $script.FullName -IncludeRule $rule.RuleName ).Count | Should Be 0
+                    (Invoke-ScriptAnalyzer -Path $script.FullName -IncludeRule $rule.RuleName -ExcludeRule 'PSUseToExportFieldsInManifest').Count | Should Be 0
                 }
             }
         }
@@ -131,8 +131,8 @@ Then 'all script files pass PSScriptAnalyzer rules' {
         If ( -Not $Pester.TestResult[-1].Passed )
         {
             $AllPassed = $false
-        } 
+        }
     }
-    
+
     $AllPassed | Should be $true
 }

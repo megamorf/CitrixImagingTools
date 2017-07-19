@@ -1,6 +1,6 @@
 function Do-Something
 {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseApprovedVerbs", "")]
     [OutputType()]
     [CmdletBinding(SupportsShouldProcess = $true)]
     param()

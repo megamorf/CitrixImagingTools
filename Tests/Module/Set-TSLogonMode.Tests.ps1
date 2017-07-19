@@ -4,13 +4,13 @@ Import-Module $PSScriptRoot\..\..\CitrixImagingTools\CitrixImagingTools.psd1 -Fo
 Describe 'Set-TSLogonMode' {
     InModuleScope CitrixImagingTools {
 
-        Context 'a' {
+        Context 'ToDo' {
             function Get-CimInstance {}
             function Set-CimInstance {param([Parameter(ValueFromPipeline = $true)]$InputObject) $input}
             Mock -CommandName Get-CimInstance -MockWith { @{} }
             #Mock -CommandName Set-CimInstance -MockWith { $args }
 
-            It 'Disables Logon' {
+            It 'Disables Logon' -Skip {
                 $f = Set-TSLogonMode -Mode ProhibitLogons
                 write-verbose ($f | ft -au | out-string) -Verbose
                 $f | SHould Not BeNullOrEmpty

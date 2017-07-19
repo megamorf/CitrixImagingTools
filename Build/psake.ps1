@@ -4,7 +4,8 @@
 Properties {
     # Define global variables used by tasks
     $projectRoot = $ENV:BHProjectPath
-    if(-not $projectRoot) {
+    if (-not $projectRoot)
+    {
         $projectRoot = Resolve-Path "$PSScriptRoot\.."
     }
     $sut = $env:BHProjectName
@@ -12,7 +13,7 @@ Properties {
     $lines = '----------------------------------------------------------------------'
 
     $Verbose = @{}
-    if($ENV:BHCommitMessage -match "!verbose")
+    if ($ENV:BHCommitMessage -match "!verbose")
     {
         $Verbose = @{Verbose = $True}
     }
@@ -33,13 +34,15 @@ Task Init {
 }
 
 # Test entire project
-task Test -depends Init, Analyze, Pester  {
+task Test -depends Init, Analyze, Pester {
 }
 
 task Analyze -Depends Init {
     $lines
     $saResults = Invoke-ScriptAnalyzer -Path $sut -Severity Error -Recurse -Verbose:$false -ExcludeRule 'PSUseToExportFieldsInManifest'
-    if ($saResults) {
+
+    if ($saResults)
+    {
         $saResults | Format-Table
         Write-Error -Message 'One or more Script Analyzer errors/warnings where found. Build cannot continue!'
     }
@@ -47,14 +50,16 @@ task Analyze -Depends Init {
 
 task Pester -Depends Init {
     $lines
-    if(-not $ENV:BHProjectPath) {
+    if (-not $ENV:BHProjectPath)
+    {
         Set-BuildEnvironment -Path $PSScriptRoot\..
     }
     Remove-Module $ENV:BHProjectName -ErrorAction SilentlyContinue
     Import-Module (Join-Path $ENV:BHProjectPath $ENV:BHProjectName) -Force
 
     $testResults = Invoke-Pester -Path $tests -PassThru
-    if ($testResults.FailedCount -gt 0) {
+    if ($testResults.FailedCount -gt 0)
+    {
         $testResults | Format-List
         Write-Error -Message 'One or more Pester tests failed. Build cannot continue!'
     }
@@ -82,8 +87,8 @@ task Deploy -depends Build {
     $lines
 
     $Params = @{
-        Path = $ProjectRoot
-        Force = $true
+        Path    = $ProjectRoot
+        Force   = $true
         Recurse = $false # We keep psdeploy artifacts, avoid deploying those : )
     }
     Invoke-PSDeploy @Verbose @Params
