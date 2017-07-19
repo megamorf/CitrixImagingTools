@@ -23,13 +23,28 @@
 
         This feature uses P/Invoke with Duplicate Process Tokens.
 
-    .PARAMETER Force
-        Specify to overwrite existing AutoAdmin Logon settings
+    .PARAMETER AutoLogonCount
+        Sets the number of times the system would reboot without asking for credentials.
+
+    .PARAMETER VerifyCredential
+        Tests against Active Directory if the provided credential are valid and throws an error
+        if they're not correct.
 
     .EXAMPLE
         Add-AutoAdminLogon -Credential $(Get-Credential) -UseLsaSecretStorage -Verbose
 
-        ToDo: add example output/more examples
+        Sets up AutoAdminLogon with the provided credentials. Instead of storing the password
+        in the registry in clear text it gets stored in the LSA secrets store which is a bit
+        more secure.
+
+    .EXAMPLE
+        Add-AutoAdminLogon -Credential $Credential -VerifyCredential -Verbose
+
+        Verifies the provided credentials against Active Directory before setting up the
+        AutoAdminLogon. Aborts the process if the verification failed.
+
+        The password is stored in the registry in cleartext since the -UseLsaSecretStorage
+        switch was not provided.
 
     .NOTES
         ToDo: add tags, author info
@@ -44,9 +59,12 @@
 
         [switch] $UseLsaSecretStorage,
 
-        [switch] $Force
+        [int] $AutoLogonCount
+
     )
 
+    # We only care about domain users, so ensure the rest of the
+    # function is only run if a domain was provided with the username
     if ($Credential.UserName -like "*\*" )
     {
         $Domain, $Username = $Credential.UserName.split('\')
@@ -60,10 +78,18 @@
         throw "Please provide a valid domain user"
     }
 
-    $Path = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+    # Ensures that the rest of the function is only run if the
+    # username/password can be successfully tested against AD
+    if ($VerifyCredential.IsPresent)
+    {
+        Write-Verbose -Message ("Username=$Username,Domain=$Domain", 'Verify Credentials')
+        if ($false -eq (Test-Credential -Credential $Credential))
+        {
+            throw 'AD credential verification failed. Aborting...'
+        }
+    }
 
-    # CHeck if there is an auto admin logon configured already
-    # ToDo: add logic, eval force switch
+    $Path = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
 
     if ($PSCmdlet.ShouldProcess("Username=$Username,Domain=$Domain", 'Add AutoAdmin logon'))
     {
@@ -71,15 +97,21 @@
         Set-ItemProperty -Path $Path -Name 'DefaultUserName'   -Value $Username
         Set-ItemProperty -Path $Path -Name 'DefaultDomainName' -Value $Domain
 
+        if ($AutoLogonCount)
+        {
+            New-ItemProperty -Path $Path -Name 'AutoLogonCount' -Value $AutoLogonCount -Type DWord -Force
+        }
+
         if (-not $UseLsaSecretStorage.IsPresent)
         {
             Set-ItemProperty -Path $Path -Name 'DefaultPassword' -Value $Credential.GetNetworkCredential().Password
+            Set-LsaSecret -Key 'DefaultPassword' -Value $null
         }
         else
         {
-            Add-LsaSecret # ToDo: add function and
+            Write-Warning -Message "Adding cleartext password to registry. Please consider using the '-UseLsaSecretStorage' switch."
+            Set-LsaSecret -Key 'DefaultPassword' -Value $Credential.Password
+            Remove-ItemProperty -Path $Path -Name 'DefaultPassword' -ErrorAction SilentlyContinue
         }
-
     }
-
 }
