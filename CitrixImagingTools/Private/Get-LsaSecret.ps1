@@ -28,6 +28,7 @@ function Get-LsaSecret
         ToDo: add tags, author info
     #>
 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
     [OutputType([system.security.securestring])]
     [CmdletBinding()]
     param(

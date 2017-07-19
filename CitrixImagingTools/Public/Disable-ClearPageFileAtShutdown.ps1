@@ -22,7 +22,6 @@
         ToDo: add tags, author info
     #>
 
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
     [CmdletBinding(SupportsShouldProcess = $true)]
     param()
 

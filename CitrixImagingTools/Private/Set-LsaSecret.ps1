@@ -20,6 +20,7 @@ function Set-LsaSecret
     .NOTES
         ToDo: add tags, author info
     #>
+
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
