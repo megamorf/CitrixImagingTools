@@ -3,6 +3,7 @@ Function Test-PvsConnection
     [CmdletBinding()]
     param()
 
+    Add-PSSnapin -Name 'Citrix.PVS.SnapIn' -ErrorAction Stop
     $IsConnected = (Get-PvsConnection).Connected
 
     if(-not $IsConnected)
