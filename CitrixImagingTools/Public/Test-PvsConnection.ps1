@@ -15,6 +15,8 @@ Function Test-PvsConnection
         Author: Sebastian Neumann (@megam0rf)
         Tags: PVS, State, RequiresSnapin
     #>
+
+    [OutputType([System.Boolean])]
     [CmdletBinding()]
     param()
 
