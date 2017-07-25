@@ -9,11 +9,12 @@ function Test-Credential
         Validates a credential against the local computer or
         Active Directory (default).
 
-        Returns true if validation was successful, or false.
+        Returns true if validation was successful otherwise
+        false.
 
     .PARAMETER Credential
         Specify a credential object that contains a username/
-        password combination that should be validated.
+        password combination to validate.
 
     .PARAMETER Scope
         The validation scope.
@@ -34,7 +35,8 @@ function Test-Credential
         the local machine.
 
     .NOTES
-        ToDo: add tags, author info
+        Author: Sebastian Neumann (@megam0rf)
+        Tags: Credential, Test
     #>
 
     [CmdletBinding()]
@@ -53,17 +55,10 @@ function Test-Credential
         throw "Username is empty! Aborting"
     }
 
-    if ($Credential.UserName -match '(\\|@)')
+    if (Split-DomainUsername -Name $Credential.UserName -OutVariable User)
     {
         Write-Verbose -Message ('Removing domain from Username' | AddPrefix)
-        if ($Credential.UserName -like "*\*" )
-        {
-            $Username = $Credential.UserName.split('\')[-1]
-        }
-        elseif ($Credential.UserName -like "*@*")
-        {
-            $Username = $Credential.UserName.split('@')[0]
-        }
+        $Username = $User.Name
         Write-Verbose -Message ("Username [$Username]" | AddPrefix)
     }
     else
@@ -72,13 +67,6 @@ function Test-Credential
     }
 
     Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-
-    #switch ($Scope)
-    #{
-    #    'Domain' {$DS = [System.DirectoryServices.AccountManagement.PrincipalContext]::New($Scope); break}
-    #    'Machine' {$DS = [System.DirectoryServices.AccountManagement.PrincipalContext]::New($Scope, $env:computername); break}
-    #    Default {}
-    #}
 
     $DS = [System.DirectoryServices.AccountManagement.PrincipalContext]::New($Scope)
     $DS.ValidateCredentials($Username, $Credential.GetNetworkCredential().Password)
