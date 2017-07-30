@@ -9,14 +9,14 @@ Function Get-PvsPath
     #>
     try
     {
-        if (Test-Path -LiteraPath "$env:ProgramFiles\Citrix\Provisioning Services")
+        if (Test-Path -LiteralPath "$env:ProgramFiles\Citrix\Provisioning Services")
         {
-            $Path = Get-Item -LiteraPath "$env:ProgramFiles\Citrix\Provisioning Services"
+            $Path = Get-Item -LiteralPath "$env:ProgramFiles\Citrix\Provisioning Services"
         }
         else
         {
             $Pkg = Get-Package -Name 'Citrix Provisioning Services Target Device x64'
-            $Path = Get-Item -LiteraPath $Pkg.FullPath
+            $Path = Get-Item -LiteralPath $Pkg.FullPath
         }
 
         return $Path

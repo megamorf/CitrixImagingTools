@@ -1,6 +1,23 @@
 function Start-Defragmentation
 {
-    [cmdletbinding(SupportsShouldProcess=$true)]
+    <#
+    .SYNOPSIS
+    Short description
+
+    .DESCRIPTION
+    Long description
+
+    .PARAMETER DriveLetter
+    Parameter description
+
+    .EXAMPLE
+    An example
+
+    .NOTES
+    General notes
+    #>
+
+    [cmdletbinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
@@ -22,7 +39,7 @@ function Start-Defragmentation
 
     Write-Verbose -Message ("Starting defrag" | AddPrefix)
 
-    if ($PSCmdlet.ShouldProcess("Defragmenting drive $DriveLetter", "Arguments: $defragargs"))
+    if ($PSCmdlet.ShouldProcess("Defragment drive $DriveLetter", "Arguments: $defragargs"))
     {
         Start-Process defrag.exe -ArgumentList $DriveLetter, $defragargs -Wait
     }

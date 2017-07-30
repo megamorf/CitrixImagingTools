@@ -2,24 +2,18 @@
 {
     <#
     .SYNOPSIS
-        ToDo: Disables Offline Files which is recommended for always-on systems.
+        Disables clearing the paging file during the shutdown process.
 
     .DESCRIPTION
-        ToDo: The disabling of Offline Files is strongly recommended to prevent Windows from caching
-        network files on its local disk – a feature with no benefit to a diskless system.
-
-        Offline Files saves a copy of network files on the user's computer for use when the computer
-        is not connected to the network.
-
-        Note: Changes to this setting do not take effect until the affected computer is restarted.
+        Not required for MCS or PVS based nonpersistent virtual desktops.
+        Clearing the page file increases shutdown times.
 
     .EXAMPLE
         Disable-ClearPageFileAtShutdown
 
-        ToDo: add example output
-
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: 
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]
@@ -32,8 +26,8 @@
         Value        = 0
     }
 
-    if ($PSCmdlet.ShouldProcess('Disable Clear Page File at Shutdown'))
+    if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, 'Disable Clear Page File at Shutdown'))
     {
-        Set-ItemProperty @Params -Force
+        New-ItemProperty @Params -Force | Out-Null
     }
 }

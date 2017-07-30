@@ -15,21 +15,25 @@
     .EXAMPLE
         Disable-WindowsUpdate
 
-        ToDo: add example output
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Sealing
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]
     param()
 
-    $Path = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update'
+    $Params = @{
+        Path = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update'
+        PropertyType = 'Dword'
+        Force = $true
+    }
 
     if ($PSCmdlet.ShouldProcess('Disable automatic update searching & downloading'))
     {
-        New-ItemProperty -Force -Path $Path -PropertyType Dword -Name AUOptions -Value 1
-        New-ItemProperty -Force -Path $Path -PropertyType Dword -Name ScheduledInstallDay -Value 0
-        New-ItemProperty -Force -Path $Path -PropertyType Dword -Name ScheduledInstallTime -Value 3
+        New-ItemProperty @Params -Name AUOptions -Value 1 | Out-Null
+        New-ItemProperty @Params -Name ScheduledInstallDay -Value 0 | Out-Null
+        New-ItemProperty @Params -Name ScheduledInstallTime -Value 3 | Out-Null
     }
 
     if ($PSCmdlet.ShouldProcess('Stop & disable windows update service'))

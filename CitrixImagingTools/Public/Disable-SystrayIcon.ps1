@@ -18,26 +18,30 @@ Function Disable-SystrayIcon
         - PvsDisk
 
     .EXAMPLE
-        Disable-SystrayIcon
+        Disable-SystrayIcon -Icon VMwareTools -Verbose
 
-        ToDo: add example output
+        Hides the VMware Tools icon from the systray.
+
+    .EXAMPLE
+        Disable-SystrayIcon -All -Verbose
+
+        Hides the VMware Tools and PVS vDisk icon from
+        the systray.
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Build,
     #>
 
-    [CmdletBinding(DefaultParameterSetName = 'All', SupportsShouldProcess = $true)]
+    [CmdletBinding(DefaultParameterSetName = 'CustomSelection', SupportsShouldProcess = $true)]
     param(
-        [Parameter(ParameterSetName = 'CustomSelection')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'CustomSelection')]
         [ValidateSet('VMwareTools', 'PVSvDisk')]
         $Icon,
 
         [Parameter(ParameterSetName = 'All')]
         [switch]$All
     )
-
-    # Remove duplicates from the icon input
-    $Icon = $Icon | Select-Object -Unique
 
     if ($All.IsPresent -or 'VMwareTools' -in $Icon)
     {
@@ -64,6 +68,7 @@ Function Disable-SystrayIcon
 
         if ($PSCmdlet.ShouldProcess('PvsDisk', 'Remove systray icon'))
         {
+            # ToDo: Path cannot be found
             Set-ItemProperty @PVSvDiskParams -Force
         }
     }

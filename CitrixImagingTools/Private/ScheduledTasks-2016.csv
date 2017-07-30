@@ -1,0 +1,24 @@
+Tasks;Category;Description
+AutoCHK\Proxy;CEIP;This task collects and uploads autochk SQM data if opted-in to the Microsoft Customer Experience Improvement Program.
+Customer Experience Improvement Program \Consolidator;CEIP;If the user has consented to participate in the Windows Customer Experience Improvement Program, this job collects and sends usage data to Microsoft.
+Customer Experience Improvement Program \KernelCeipTask;CEIP;The Kernel CEIP (Customer Experience Improvement Program) task collects additional information about the system and sends this data to Microsoft. If the user has not consented to participate in Windows CEIP, this task does nothing.
+Customer Experience Improvement Program \Uploader;CEIP;This job sends data about windows based on user participation in the Windows Customer Experience Improvement Program
+Customer Experience Improvement Program \UsbCeip;CEIP;The USB CEIP (Customer Experience Improvement Program) task collects Universal Serial Bus related statistics and information about your machine and sends to the Windows Device Connectivity engineering group at Microsoft. The information received is used to help improve the reliability, stability, and overall functionality of USB in Windows. If the user has not consented to participate in Windows CEIP, this task does not do anything.
+Application Experience\Microsoft Compatibility Appraiser;Applications;Helps resolve application compatibility challenges.
+Application Experience\StartupTask;Applications;Determines if there are too many startup entries and then notifies the user
+Windows Defender\Windows Defender Cache Maintenance;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Defender\Windows Defender Cleanup;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Defender\Windows Defender Scheduled Scan;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Defender\Windows Defender Verification;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Filtering Platform \BfeOnServiceStartTypeChange;Safety;This task adjusts the start type for firewall-triggered services when the start type of the Base Filtering Engine (BFE) is disabled.
+CHKDSK\Proactive Scan;Maintenance;NTFS Volume Health Scan
+Diagnosis\Scheduled;Maintenance;The Windows Scheduled Maintenance Task performs periodic maintenance of the computer system by fixing problems automatically or reporting them through the Action Center.
+DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector;Maintenance;The Windows Disk Diagnostic reports general disk and system information to Microsoft for users participating in the Customer Experience Program.
+Maintenance\WinSAT;Maintenance;Measures a system�s performance and capabilities
+Power Efficiency Diagnostics\AnalyzeSystem;Maintenance;This task analyzes the system looking for conditions that may cause high energy use.
+RecoveryEnvironment\VerifyWinRE;Maintenance;Validates the Windows Recovery Environment.
+Registry\RegIdleBackup;Maintenance;Registry Idle Backup Task
+Mobile Broadband Accounts / MNO Metadata Parser;General;Parses information related to mobile broadband users
+RAS / MobilityManager;General;Provides support for the switching of mobility enabled VPN connections if their underlying interface goes down.
+Shell / IndexerAutomaticMaintenance;General;Maintains the search index
+WDI\ResolutionHost;General;The Windows Diagnostic Infrastructure Resolution host enables interactive resolutions for system problems detected by the Diagnostic Policy Service. It is triggered when necessary by the Diagnostic Policy Service in the appropriate user session. If the Diagnostic Policy Service is not running, the task will not run.

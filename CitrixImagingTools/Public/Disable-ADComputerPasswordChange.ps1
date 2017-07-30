@@ -5,15 +5,17 @@ function Disable-ADComputerPasswordChange
         Disables periodic AD computer password changes.
 
     .DESCRIPTION
-        This is required for PVS target devices since. PVS takes
+        This is required for PVS target devices since PVS takes
         care of changing the passwords in AD every 7 days by default.
 
     .EXAMPLE
         Disable-ADComputerPasswordChange
 
         ToDO: Add examples
+
     .NOTES
-        ToDo: Add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Build
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
@@ -26,8 +28,8 @@ function Disable-ADComputerPasswordChange
         Value        = 1
     }
 
-    if ($PSCmdlet.ShouldProcess('Disable periodic Computer password changes'))
+    if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, 'Disable periodic Computer password changes'))
     {
-        New-ItemProperty @Params -Force
+        New-ItemProperty @Params -Force | Out-Null
     }
 }

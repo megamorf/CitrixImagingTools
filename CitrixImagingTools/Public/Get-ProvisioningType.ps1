@@ -18,33 +18,34 @@ function Get-ProvisioningType
         PVS
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Runtime, State
     #>
 
     [OutputType([string])]
     [CmdletBinding()]
     param()
 
-    # Check XA/XD agent installation
-    [bool]$CitrixAgentInstalled = Get-Service -Name "BrokerAgent" -ErrorAction SilentlyContinue
-    if (-not $CitrixAgentInstalled)
-    {
-        throw "No Citrix VDA (MFA) agent found on the system!"
-    }
-
     try
     {
-        if (Select-String -Path 'C:\Personality.ini' -Pattern ([regex]::Escape('$DiskName=')) -ErrorAction Stop)
-        {
-            return 'PVS'
+        $Params = @{
+            Namespace = 'root\Citrix\DesktopInformation'
+            ClassName = 'Citrix_VirtualDesktopInfo'
+            Property  = 'ProvisioningType'
         }
-        else
+        
+        $Info = Get-CimInstance @Params
+        
+        switch ($Info.ProvisioningType)
         {
-            return 'MCS'
+            'ProvisioningServices' { 'PVS'; break }
+            'MachineCreationServices' { 'MCS'; break }
+            default { 'Manual' }
         }
+
     }
     catch
     {
-        'Manual'
+        throw "No Citrix VDA (MFA) agent found on the system!"
     }
 }

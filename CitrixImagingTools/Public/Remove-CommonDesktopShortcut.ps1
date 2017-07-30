@@ -13,7 +13,8 @@ function Remove-CommonDesktopShortcut
         ToDo: add example output
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Filesystem, Cleanup, Build
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]

@@ -12,7 +12,8 @@ function Clear-EventLogFull
         Clear-EventLogFull
 
     .NOTES
-        ToDo: Add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Sealing
     #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
     param()

@@ -1,0 +1,31 @@
+Tasks;Category;Description
+Application Experience\Appraiser;CEIP;Aggregates and uploads Application Telemetry information if opted-in to the Microsoft Customer Experience Improvement Program.
+Application Experience\ProgramDataUpdater;CEIP;Collects program telemetry information if opted-in to the Microsoft Customer Experience Improvement Program
+AutoCHK\Proxy;CEIP;This task collects and uploads autochk SQM data if opted-in to the Microsoft Customer Experience Improvement Program.
+Customer Experience Improvement Program \Consolidator;CEIP;If the user has consented to participate in the Windows Customer Experience Improvement Program, this job collects and sends usage data to Microsoft.
+Customer Experience Improvement Program \KernelCeipTask;CEIP;The Kernel CEIP (Customer Experience Improvement Program) task collects additional information about the system and sends this data to Microsoft. If the user has not consented to participate in Windows CEIP, this task does nothing.
+Customer Experience Improvement Program \Uploader;CEIP;This job sends data about windows based on user participation in the Windows Customer Experience Improvement Program
+Customer Experience Improvement Program \UsbCeip;CEIP;The USB CEIP (Customer Experience Improvement Program) task collects Universal Serial Bus related statistics and information about your machine and sends to the Windows Device Connectivity engineering group at Microsoft. The information received is used to help improve the reliability, stability, and overall functionality of USB in Windows. If the user has not consented to participate in Windows CEIP, this task does not do anything.
+Shell\FamilySafetyMonitor;Safety;Initializes Family Safety monitoring and enforcement.
+Shell\FamilySafetyRefresh;Safety;Synchronizes the latest settings with the Family Safety website.
+Windows Defender\Windows Defender CacheMaintenance;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Defender\Windows Defender CacheMaintenance;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Defender\Windows Defender Cleanup;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Defender\Windows DefenderScheduled Scan;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Defender\Windows DefenderVerification;Safety;Can be disabled in case an alternative virus and malware protection has been implemented.
+Windows Filtering Platform \BfeOnServiceStartTypeChange;Safety;This task adjusts the start type for firewall-triggered services when the start type of the Base Filtering Engine (BFE) is disabled.
+Application Experience\StartupAppTask;Optimization;Scans startup entries and raises notification to the user if there are too many startup entries.
+CHKDSK\Proactive Scan;Optimization;NTFS Volume Health Scan
+Diagnosis\Scheduled;Optimization;The Windows Scheduled Maintenance Task performs periodic maintenance of the computer system by fixing problems automatically or reporting them through the Action Center.
+DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector;Optimization;The Windows Disk Diagnostic reports general disk and system information to Microsoft for users participating in the Customer Experience Program.
+DiskDiagnostic\Microsoft-Windows-DiskDiagnosticResolver;Optimization;This task warns users about faults that occur on disks that support Self-Monitoring and Reporting Technology
+Defrag\ScheduledDefrag;Optimization;This task optimizes local storage drives
+FileHistory\File History;Optimization;Protects user files from accidental loss by copying them to a backup location when the system is unattended
+Maintenance\WinSAT;Optimization;Measures a system’s performance and capabilities
+MemoryDiagnostic\ProcessMemoryDiagnosticEvents;Optimization;Schedules a memory diagnostic in response to system events.
+MemoryDiagnostic\RunFullMemoryDiagnostic;Optimization;Detects and mitigates problems in physical memory (RAM).
+Power Efficiency Diagnostics\AnalyzeSystem;Optimization;This task analyzes the system looking for conditions that may cause high energy use.
+RecoveryEnvironment\VerifyWinRE;Optimization;Validates the Windows Recovery Environment.
+Registry\RegIdleBackup;Optimization;Registry Idle Backup Task
+SystemRestore\SR;Optimization;This task creates regular system protection points.
+WDI\ResolutionHost;Optimization;The Windows Diagnostic Infrastructure Resolution host enables interactive resolutions for system problems detected by the Diagnostic Policy Service. It is triggered when necessary by the Diagnostic Policy Service in the appropriate user session. If the Diagnostic Policy Service is not running, the task will not run

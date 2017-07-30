@@ -2,7 +2,7 @@
 {
     <#
     .SYNOPSIS
-        Removes common Autostart files
+        Removes common Autostart files.
 
     .DESCRIPTION
         Deletes files in C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup.
@@ -19,7 +19,8 @@
         ToDo: add example output
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Build, Cleanup
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]

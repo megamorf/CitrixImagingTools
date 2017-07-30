@@ -37,6 +37,9 @@
 	.LINK
 	https://github.com/megamorf/CitrixImagingTools/blob/master/CitrixImagingTools/Public/Set-TSLogonMode.ps1
 
+	.LINK
+	https://github.com/megamorf/CitrixImagingTools/blob/master/CitrixImagingTools/Public/Get-TSLogonMode.ps1
+
 	.EXAMPLE
 	Set-TSLogonMode -Mode ProhibitNewLogonsUntilRestart
 	Drains the RDSH by preventing log on attempts, existing sessions are unaffected.
@@ -64,7 +67,7 @@
         [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential = [System.Management.Automation.PSCredential]::Empty
+        $Credential
     )
 
     BEGIN
@@ -80,7 +83,8 @@
     {
         foreach ($computer in $Computername)
         {
-            $TSSettings = Get-CimInstance @TSSettingsParams -ComputerName $Computer -Credential $Credential
+            $cs = New-CimSession -ComputerName $computer -Credential $Credential -Verbose:$false
+            $TSSettings = Get-CimInstance @TSSettingsParams -CimSession $cs
 
             switch ($Mode)
             {
@@ -108,10 +112,12 @@
                 }
             }
 
-            if ($PSCmdlet.ShouldProcess("Set Logon Mode to $Mode", "$computer"))
+            if ($PSCmdlet.ShouldProcess($Computer, "Set Logon Mode to [$Mode]"))
             {
-                $TSSettings | Set-CimInstance -ComputerName $Computer -Credential $Credential
+                $TSSettings | Set-CimInstance -Verbose:$false
             }
+
+            Remove-CimSession -CimSession $cs -WhatIf:$false
         }
     }
 }

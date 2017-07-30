@@ -18,7 +18,7 @@ function Set-LsaSecret
         Set-LsaSecret -Key MyKey -Value $ValueAsSecureString
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]

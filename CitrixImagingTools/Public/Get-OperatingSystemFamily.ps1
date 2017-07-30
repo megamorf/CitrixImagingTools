@@ -3,7 +3,7 @@ Function Get-OperatingSystemFamily
     [OutputType([string])]
     [CmdletBinding(DefaultParameterSetName = 'Query')]
     Param(
-        [Parameter(ParameterSetName = 'Resolve')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'Resolve')]
         [ValidateNotNullOrEmpty()]
         $Version,
 
