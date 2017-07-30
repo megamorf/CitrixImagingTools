@@ -15,7 +15,8 @@ Function Remove-FloppyCD
         ToDo: add example output
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Build
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param()

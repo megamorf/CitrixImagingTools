@@ -16,10 +16,9 @@
     .EXAMPLE
         Disable-OfflineFiles
 
-        ToDo: add example output
-
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: 
     #>
 
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "")]
@@ -33,13 +32,13 @@
         Value        = 0
     }
 
-    if ($PSCmdlet.ShouldProcess('Disable offline files on the machine'))
+    if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, 'Disable offline files on the machine'))
     {
         if ($false -eq (Test-Path -Path $Params.Path))
         {
             New-Item -Path $Params.Path -ItemType Directory -Force | Out-Null
         }
 
-        New-ItemProperty @Params -Force
+        New-ItemProperty @Params -Force | Out-Null
     }
 }

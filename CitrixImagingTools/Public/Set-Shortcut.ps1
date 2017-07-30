@@ -2,25 +2,28 @@ Function Set-Shortcut
 {
     <#
     .SYNOPSIS
-    Short description
+        Creates or overwrites file shortcuts (*.lnk).
 
     .DESCRIPTION
-    Long description
+        Uses a com object to create a file shortcut The link might
+        additionally specify parameters to be passed to the target
+        program when it is run.
 
     .PARAMETER TargetPath
-    Parameter description
+        Specify a path to the target program file/directory.
 
     .PARAMETER Arguments
-    Parameter description
+        Specify optional arguments for the program under $TargetPath.
 
     .PARAMETER DestinationPath
-    Parameter description
+        Path where the shortcut is going to be stored.
 
     .EXAMPLE
         ToDo: add examples
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Filesystem
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]

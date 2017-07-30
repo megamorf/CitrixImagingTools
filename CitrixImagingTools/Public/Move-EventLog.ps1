@@ -24,7 +24,8 @@
         Sets "%WriteCacheDisk%\EventLogs" as filesystem location.
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Filesystem, Build
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]

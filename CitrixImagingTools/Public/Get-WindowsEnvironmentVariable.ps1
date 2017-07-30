@@ -40,7 +40,8 @@ function Get-WindowsEnvironmentVariable
         Returns a specific variable from a specific scope.
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Environment, State
     #>
 
     [CmdletBinding()]

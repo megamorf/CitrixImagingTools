@@ -11,7 +11,8 @@ function Clear-NetworkCache
         Clear-NetworkCache
 
     .NOTES
-        ToDo: Add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Network, Sealing
     #>
 
     ipconfig.exe /flushdns

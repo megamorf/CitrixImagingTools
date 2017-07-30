@@ -22,7 +22,8 @@
         ToDo: add example output
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Build, Cleanup
 
     .Link
         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/dism-operating-system-package-servicing-command-line-options

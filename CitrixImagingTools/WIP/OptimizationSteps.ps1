@@ -22,8 +22,29 @@ at HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Network
 
 #endregion
 
+#region disable memory dump creation
+#[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\CrashControl]
+“CrashDumpEnabled”=dword:00000000
+“LogEvent”=dword:00000000
+“SendAlert”=dword:00000000
+#endregion
+
 
 
 #region Increase Service Startup Timeout
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name ServicesPipeTimeout -Value #dword:0002bf20
 #endregion
+
+
+# services server 2016
+# https://blogs.technet.microsoft.com/secguide/2017/05/29/guidance-on-disabling-system-services-on-windows-server-2016-with-desktop-experience/
+
+# disable indexing service
+# Before switching vDisk to Standard Image mode: “ipconfig/release” (release DHCP address).
+
+<#
+Alignment issues
+Constructed with extra byte at end of file
+Dynamic VHD always misaligns disk with storage
+Use only fixed-size VHDs for write-cache drives and Provisioning services vDisks.
+#>

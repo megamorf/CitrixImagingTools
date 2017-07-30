@@ -4,22 +4,42 @@
     [CmdletBinding(SupportsShouldProcess = $true)]
     param()
 
+    # for readability
+    $EA = @{ErrorAction = 'SilentlyContinue'}
 
-    if ($PSCmdlet.ShouldProcess($env:ComputerName, 'Clear Event Logs'))
+    Write-Verbose -Message ("Clearing Event Logs" | AddPrefix)
+    Clear-EventLogFull -Confirm:$false
+
+    if (Get-Service @EA -Name msdtc)
     {
-        Get-EventLog -List | ForEach-Object { $_.clear() }
-        # wevtutil cl system
+        Write-Verbose -Message ("Resetting Distributed Transaction Coordinator" | AddPrefix)
+        & msdtc.exe -reset
     }
 
-    # If MS Distributed Transaction Service is installed, run msdtc.exe -reset
+    if (Get-Service @EA -Name MSMQ)
+    {
+        Write-Verbose -Message ("Clearing MS Message Queuing (MSMQ) cache" | AddPrefix)
+        Get-Service -Name MQAC, MSMQ | Stop-Service -Force
+    }
 
-    # if MS Message Queuing is installed, clear its cache
-    Get-Service -Name MQAC, MSMQ | Stop-Service
+    Write-Verbose -Message ("Deleting local profiles that are not required" | AddPrefix)
+    Remove-UserProfile
 
-    # Delete local profiles that are not required
+    Write-Verbose -Message "Stopping Citrix Profile Manager service"
+    Stop-Service -Name ctxProfile -Force
 
-    # Stop Citrix Profile Manager service
-    Stop-Service ctxProfile -Force
+    if (Get-Package @EA -Name 'Google Chrome')
+    {
+        Write-Verbose -Message ("Removing Google Chrome pecularities" | AddPrefix)
+        Remove-Item @EA -Force -Path 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Active Setup\Installed Components\{8A69D345-D564-463c-AFF1-A69D9E530F96}'
+        Remove-Item @EA -Force -Path 'HKLM\SOFTWARE\Wow6432Node\Google\Update\Clients\{8A69D345-D564-463c-AFF1-A69D9E530F96}'
+        Remove-Item @EA -Force -Path 'HKLM\SOFTWARE\Microsoft\Active Setup\Installed Components\{8A69D345-D564-463c-AFF1-A69D9E530F96}'
+
+        Write-Verbose -Message ("Setting Chrome update services to disabled" | AddPrefix)
+        Stop-Service @EA -Name gupdate, gupdatem -PassThru | Set-Service -StartupType Disabled
+    }
+}
+<#
 
     # If Citrix Profile Manager is configured via GPO, check that its INI in C:\Program Files\Citrix\User Profile Manager has been renamed
     Rename-Item "C:\Program Files\Citrix\User Profile Manager\UPMPolicyDefaults_all.ini" UPMPolicyDefaults_all.old -ErrorAction SilentlyContinue
@@ -55,7 +75,7 @@ reg delete HKLM\SOFTWARE\Microsoft\SystemCertificates\SMS\Certificates\ /f
 del /q "C:\Windows\ccm\logs\*.log"
 #>
 
-    <#
+<#
 we clear the key and initiate a successful RDP connection to pull a recent license.
 
 reg delete HKLM\Software\Microsoft\MSLicensing\Store\LICENSE000 /f
@@ -69,26 +89,15 @@ gci Cert:\LocalMachine\SMS | remove-item
 write-Output "SMS certificates removed"
 #>
 
-}
+#}
 
 <#
 https://www.citrix.com/blogs/2015/01/19/size-matters-pvs-ram-cache-overflow-sizing/
 "Defragment the vDisk before deploying the image and after major changes. Defragmenting the vDisk resulted in write cache savings of up to 30% or more during testing. This will impact any of you who use versioning as defragmenting a versioned vDisk is not recommended. Defragmenting a versioned vDisk will create excessively large versioned disks (.AVHD files). Run defragmentation after merging the vDisk versions.Note: Defragment the vDisk by mounting the .VHD on the PVS server and running a manual defragmentation on it. This allows for a more robust defragmentation as the OS is not loaded. An additional 15% reduction in the write cache size was seen with this approach over standard defragmentation."
 #>
 
-
 <#
-Write-warning "Removing Google Chrome pecularities"
-reg delete 'HKLM\SOFTWARE\Wow6432Node\Microsoft\Active Setup\Installed Components\{8A69D345-D564-463c-AFF1-A69D9E530F96}' /f
-reg delete 'HKLM\SOFTWARE\Wow6432Node\Google\Update\Clients\{8A69D345-D564-463c-AFF1-A69D9E530F96}' /f
-reg delete 'HKLM\SOFTWARE\Microsoft\Active Setup\Installed Components\{8A69D345-D564-463c-AFF1-A69D9E530F96}' /f
-Write-Warning "Setting Chrome update services to disabled"
-c:\windows\system32\sc config gupdatem start= disabled
-c:\windows\system32\sc config gupdate start= disabled
-#>
-
-<#
-# Clear cached DHCP settings to prevent BSOD
+Write-Verbose Clear cached DHCP settings to prevent BSOD
 stop-service dhcp
 
 Windows Registry Editor Version 5.00
@@ -107,3 +116,10 @@ Windows Registry Editor Version 5.00
 “DhcpNameServer”=””
 “DhcpDefaultGateway”=””
 #>
+
+    $OS = Get-OperatingSystemFamily
+
+    if($OS -eq "Windows 10")
+    {
+        Get-AppxPackage -AllUsers | Remove-AppxPackage
+    }

@@ -18,14 +18,21 @@ Function Set-SpoolerDirectory
     .EXAMPLE
         Set-SpoolerDirectory -Path "$env:WriteCachePath\Spooler"
 
-        ToDo: add example output
+        Changes the printer spooler path to the specified location.
+
+    .EXAMPLE
+        Set-SpoolerDirectory -RestoreDefaultPath -Verbose
+
+        Restores the printer spooler path to its default location.
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Filesystem, Build
     #>
+
     [CmdletBinding(DefaultParameterSetName = 'Default', SupportsShouldProcess = $true)]
     param(
-        [Parameter(Mandatory = $true, ParameterSetName = 'Default')]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, ParameterSetName = 'Default')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Path,

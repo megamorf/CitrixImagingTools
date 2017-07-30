@@ -34,7 +34,7 @@
         Saves the content of the c:\myinifile.ini in a hashtable called $FileContent
 
     .Example
-        $inifilepath | $FileContent = Import-IniFile
+        $FileContent = $inifilepath | Import-IniFile
         -----------
         Description
         Gets the content of the ini file passed through the pipe into a hashtable called $FileContent

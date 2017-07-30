@@ -37,7 +37,6 @@ function Get-PVSRamCache
 
         [Parameter(Position = 1, Mandatory = $false)]
         [Alias("RunAs")]
-        [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential = [System.Management.Automation.PSCredential]::Empty
@@ -50,12 +49,13 @@ function Get-PVSRamCache
             $HashTable = @{
                 ComputerName = $Computer
                 Size         = 0
-                Result       = Success
+                Result       = 'Success'
             }
 
             try
             {
-                $QueryResult = CimInstance -Query 'Select PoolNonPagedBytes From Win32_PerfFormattedData_PerfOS_Memory' -ComputerName $Computer -Credential $Credential
+                $CS = New-CimSession -Credential $Credential -ComputerName $Computer
+                $QueryResult = CimInstance -Query 'Select PoolNonPagedBytes From Win32_PerfFormattedData_PerfOS_Memory' -CimSession $CS
                 $HashTable['Size'] = [math]::truncate(($QueryResult).PoolNonPagedBytes / 1MB)
             }
             catch

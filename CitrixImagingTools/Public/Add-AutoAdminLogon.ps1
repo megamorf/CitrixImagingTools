@@ -47,7 +47,8 @@
         switch was not provided.
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Credential, Account
     #>
 
     [Cmdletbinding(SupportsShouldProcess = $true)]

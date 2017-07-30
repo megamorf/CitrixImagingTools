@@ -1,4 +1,13 @@
-﻿function Disable-LargeSendOffloading
+﻿<#
+Remove file:
+Target Device
+Note: For Provisioning Server 6.0 and beyond, BNNS driver is no longer used for Windows 7 and 2008, so this registry key is not applicable. However, BNNS is still used for windows XP and 2003.
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\BNNS\Parameters\
+DWORD = EnableOffload
+Value: "0"
+#>
+
+function Disable-LargeSendOffloading
 {
     <#
     .SYNOPSIS
@@ -19,7 +28,8 @@
         ToDo: add example output
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Network, Build
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]
@@ -34,6 +44,6 @@
 
     if ($PSCmdlet.ShouldProcess('Disable Large Send Offload on the machine'))
     {
-        New-ItemProperty @Params -Force
+        New-ItemProperty @Params -Force | Out-Null
     }
 }

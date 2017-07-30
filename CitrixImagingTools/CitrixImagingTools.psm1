@@ -19,3 +19,4 @@ Foreach ($import in @($Public + $Private))
 Export-ModuleMember -Function $Public.Basename
 
 Add-Type -Path "$PSScriptRoot\Private\LsaSecretsHelper.cs"
+#Update-TypeData -TypeName System.Management.Automation.CmdletInfo -MemberName Tags -MemberType Scriptproperty -Value {Get-Tag2 -InputObject $this.Definition}

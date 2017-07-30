@@ -25,7 +25,7 @@ function Get-LsaSecret
         $UnsecureString = [PSCredential]::New("user",$Secret.Value).GetNetworkCredential().Password
 
     .NOTES
-        ToDo: add tags, author info
+        Original Author: Sebastian Neumann (@megam0rf)
     #>
 
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]

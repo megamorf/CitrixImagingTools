@@ -38,7 +38,8 @@ function Set-UniqueDiskID
         Result       : Unchanged
 
     .NOTES
-        ToDo: add tags, author info.
+        Original Author: Sebastian Neumann (@megam0rf)
+        Tags: Disk, Filesystem, Runtime
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
